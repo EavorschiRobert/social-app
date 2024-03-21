@@ -17,19 +17,20 @@ import { SignupValidationSchema as formSchema } from "@/lib/validation";
 import logo from "../../../public/images/logo.svg";
 import { Loader } from "lucide-react";
 import { Link } from "react-router-dom";
-import { User } from "@/data/data";
+import { INewUser } from "@/types";
+import { createUserAccount } from "@/lib/appwrite/api";
 
 export const signUpAction: ActionFunction = async ({ request }) => {
-  // const newUser = await
   const data = await request.formData();
-  const newUser = new User(
-    data.get("username")!,
-    data.get("name")!,
-    data.get("email")!,
-    data.get("password")!
-  );
-  console.log(newUser);
-  return null;
+  const newUser: INewUser = {
+    name: data.get('name')!.toString(),
+    email: data.get('email')!.toString(),
+    username: data.get('username')!.toString(),
+    password: data.get('password')!.toString(),
+  }
+  const savedUser = await createUserAccount(newUser);
+  console.log(savedUser);
+  return savedUser;
 };
 
 const SignupForm = () => {
@@ -60,7 +61,7 @@ const SignupForm = () => {
           To use Snapgram please enter your account details
         </p>
         <ReactForm
-          method="POST"
+        method="POST"
           // onSubmit={form.handleSubmit(onSubmit)}
           className="flex flex-col gap-5 w-full mt-4"
         >
