@@ -21,7 +21,7 @@ import { useSignInAccount } from "@/lib/react-query/queriesAndMutations";
 import { useUserContext } from "@/context/AuthContext";
 import { PasswordInput } from "../../ui/PasswordInput.tsx";
 
-const SignIn = () => {
+const SignInForm = () => {
 
 
   const { mutateAsync: signInAccount} =
@@ -132,4 +132,4 @@ const SignIn = () => {
   );
 };
 
-export default SignIn;
+export default SignInForm;
