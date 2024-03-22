@@ -4,7 +4,7 @@ import App from "./App.tsx";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import SigninForm from "./_auth/forms/SigninForm.tsx";
 import { Home } from "./_root/pages";
-import SignupForm from "./_auth/forms/SignupForm.tsx";
+import SignupForm  from "./_auth/forms/SignupForm.tsx";
 import RootLayout from "./_root/RootLayout.tsx";
 import AuthLayout from "./_auth/AuthLayout.tsx";
 

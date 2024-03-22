@@ -3,7 +3,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from 'react-toastify';
 import {
   Form,
   FormControl,
@@ -22,9 +22,9 @@ import { useUserContext } from "@/context/AuthContext";
 import { PasswordInput } from "../../ui/PasswordInput.tsx";
 
 const SignIn = () => {
-  const { toast } = useToast();
 
-  const { mutateAsync: signInAccount, isPending: isSigningIn } =
+
+  const { mutateAsync: signInAccount} =
     useSignInAccount();
   const { checkAuthUser, isLoading: isUserLoading } = useUserContext();
   const navigate = useNavigate();
@@ -43,20 +43,14 @@ const SignIn = () => {
       password: values.password,
     });
     if (!session) {
-      return toast({
-        variant: "destructive",
-        title: "Sign in failed. Please try again",
-      });
+      return toast.error("Sign in failed. Please try again");
     }
     const isLoggedId = checkAuthUser();
     if (isLoggedId) {
       form.reset();
       navigate("/");
     } else {
-      return toast({
-        variant: "destructive",
-        title: "Sign in failed. Please try again",
-      });
+      return toast.error("Sign in failed. Please try again");
     }
   }
   return (

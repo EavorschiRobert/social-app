@@ -3,7 +3,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from 'react-toastify';
 import {
   Form,
   FormControl,
@@ -15,7 +15,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { SignupValidationSchema as formSchema } from "@/lib/validation";
 import logo from "../../../public/images/logo.svg";
-import { Loader, Eye } from "lucide-react";
+import { Loader } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   useCreateUserAccount,
@@ -23,25 +23,8 @@ import {
 } from "@/lib/react-query/queriesAndMutations";
 import { useUserContext } from "@/context/AuthContext";
 import { PasswordInput } from "@/ui/PasswordInput";
-// export const signUpAction: ActionFunction = async ({ request }) => {
-//   const data = await request.formData();
-//   const newUser: INewUser = {
-//     name: data.get("name")!.toString(),
-//     email: data.get("email")!.toString(),
-//     username: data.get("username")!.toString(),
-//     password: data.get("password")!.toString(),
-//   };
-//   const savedUser = await createUserAccount(newUser);
-//   if (!savedUser) {
-//     return  "FAILED"
-//   }
-//   // const session = await signInAccount();
-//   return 'FAILED'
-//   // return savedUser;
-// };
 
 const SignupForm = () => {
-  const { toast } = useToast();
 
   const { mutateAsync: createUserAccount, isPending: isCreatingUser } =
     useCreateUserAccount();
@@ -63,30 +46,21 @@ const SignupForm = () => {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     const newUser = await createUserAccount(values);
     if (!newUser) {
-      return toast({
-        variant: "destructive",
-        title: "Sign up failed. Please try again",
-      });
+      return toast.error("Sign up failed. Please try again");
     }
     const session = await signInAccount({
       email: values.email,
       password: values.password,
     });
     if (!session) {
-      return toast({
-        variant: "destructive",
-        title: "Sign in failed. Please try again",
-      });
+      return toast.error("Sign in failed. Please try again");
     }
     const isLoggedId = checkAuthUser();
     if (isLoggedId) {
       form.reset();
       navigate("/");
     } else {
-      return toast({
-        variant: "destructive",
-        title: "Sign in failed. Please try again",
-      });
+      return toast.error("Sign in failed. Please try again");
     }
   }
   return (
@@ -99,11 +73,6 @@ const SignupForm = () => {
         <p className="text-light-3 small-medium md:base-regular">
           To use Snapgram please enter your account details
         </p>
-        {/* <ReactForm
-          method="POST"
-          // onSubmit={form.handleSubmit(onSubmit)}
-          className="flex flex-col gap-5 w-full mt-4"
-        > */}
         <form
           onSubmit={form.handleSubmit(onSubmit)}
           className="flex flex-col gap-5 w-full mt-4"
