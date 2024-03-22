@@ -3,7 +3,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
-import { ActionFunction, Form as ReactForm } from "react-router-dom";
+import { useToast } from "@/components/ui/use-toast";
 import {
   Form,
   FormControl,
@@ -15,26 +15,40 @@ import {
 import { Input } from "@/components/ui/input";
 import { SignupValidationSchema as formSchema } from "@/lib/validation";
 import logo from "../../../public/images/logo.svg";
-import { Loader } from "lucide-react";
-import { Link } from "react-router-dom";
-import { INewUser } from "@/types";
-import { createUserAccount } from "@/lib/appwrite/api";
-
-export const signUpAction: ActionFunction = async ({ request }) => {
-  const data = await request.formData();
-  const newUser: INewUser = {
-    name: data.get('name')!.toString(),
-    email: data.get('email')!.toString(),
-    username: data.get('username')!.toString(),
-    password: data.get('password')!.toString(),
-  }
-  const savedUser = await createUserAccount(newUser);
-  console.log(savedUser);
-  return savedUser;
-};
+import { Loader, Eye } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import {
+  useCreateUserAccount,
+  useSignInAccount,
+} from "@/lib/react-query/queriesAndMutations";
+import { useUserContext } from "@/context/AuthContext";
+import { PasswordInput } from "@/ui/PasswordInput";
+// export const signUpAction: ActionFunction = async ({ request }) => {
+//   const data = await request.formData();
+//   const newUser: INewUser = {
+//     name: data.get("name")!.toString(),
+//     email: data.get("email")!.toString(),
+//     username: data.get("username")!.toString(),
+//     password: data.get("password")!.toString(),
+//   };
+//   const savedUser = await createUserAccount(newUser);
+//   if (!savedUser) {
+//     return  "FAILED"
+//   }
+//   // const session = await signInAccount();
+//   return 'FAILED'
+//   // return savedUser;
+// };
 
 const SignupForm = () => {
-  const isLoading = false;
+  const { toast } = useToast();
+
+  const { mutateAsync: createUserAccount, isPending: isCreatingUser } =
+    useCreateUserAccount();
+  const { mutateAsync: signInAccount, isPending: isSigningIn } =
+    useSignInAccount();
+  const { checkAuthUser, isLoading: isUserLoading } = useUserContext();
+  const navigate = useNavigate();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -45,11 +59,36 @@ const SignupForm = () => {
       password: "",
     },
   });
-  // function onSubmit(values: z.infer<typeof formSchema>) {
-  //   // Do something with the form values.
-  //   // ✅ This will be type-safe and validated.
-  //   console.log(values);
-  // }
+
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    const newUser = await createUserAccount(values);
+    if (!newUser) {
+      return toast({
+        variant: "destructive",
+        title: "Sign up failed. Please try again",
+      });
+    }
+    const session = await signInAccount({
+      email: values.email,
+      password: values.password,
+    });
+    if (!session) {
+      return toast({
+        variant: "destructive",
+        title: "Sign in failed. Please try again",
+      });
+    }
+    const isLoggedId = checkAuthUser();
+    if (isLoggedId) {
+      form.reset();
+      navigate("/");
+    } else {
+      return toast({
+        variant: "destructive",
+        title: "Sign in failed. Please try again",
+      });
+    }
+  }
   return (
     <Form {...form}>
       <div className="sm:w-420 flex-center flex-col">
@@ -60,9 +99,13 @@ const SignupForm = () => {
         <p className="text-light-3 small-medium md:base-regular">
           To use Snapgram please enter your account details
         </p>
-        <ReactForm
-        method="POST"
+        {/* <ReactForm
+          method="POST"
           // onSubmit={form.handleSubmit(onSubmit)}
+          className="flex flex-col gap-5 w-full mt-4"
+        > */}
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
           className="flex flex-col gap-5 w-full mt-4"
         >
           <FormField
@@ -123,9 +166,8 @@ const SignupForm = () => {
               <FormItem>
                 <FormLabel>Password</FormLabel>
                 <FormControl>
-                  <Input
+                  <PasswordInput
                     placeholder="password"
-                    type="password"
                     {...field}
                     className="shad-input"
                   />
@@ -134,10 +176,11 @@ const SignupForm = () => {
               </FormItem>
             )}
           />
+
           <Button type="submit" className="shad-button_primary">
-            {isLoading ? (
+            {isCreatingUser ? (
               <div className="flex-center gap-2">
-                <Loader /> Loading...
+                <Loader className="animate-spin 1s" /> Loading...
               </div>
             ) : (
               "Sign up"
@@ -146,13 +189,14 @@ const SignupForm = () => {
           <p className="text-small-regular text-light-2 text-center">
             Already have an account?
             <Link
-              to="signin"
+              to="/sign-in"
               className="text-primary-500 text-small-semibold ml-1"
             >
               Log in
             </Link>
           </p>
-        </ReactForm>
+        </form>
+        {/* </ReactForm> */}
       </div>
     </Form>
   );
