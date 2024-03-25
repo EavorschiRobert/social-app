@@ -4,7 +4,7 @@ import editIcon from "../../../public/icons/edit.svg";
 import imageDefault from "../../../public/icons/profile-placeholder.svg";
 import { Link } from "react-router-dom";
 import defaultUser from "../../../public/icons/profile-placeholder.svg";
-import { formatDate } from "@/lib/utils";
+import { formatDate, formatToDate } from "@/lib/utils";
 import { useUserContext } from "@/context/AuthContext";
 import PostStats from "./PostStats";
 type PostCardProps = {
@@ -34,7 +34,7 @@ const PostCard = ({ post }: PostCardProps) => {
             </p>
             <div className="flex-center gap-2 text-light-3">
               <p className="subtle-semibold lg:small-regular">
-                {formatDate(post.$createdAt)}
+                {formatToDate(post.$createdAt)}
               </p>
               -
               <p className="subtle-semibold lg:small-regular">
