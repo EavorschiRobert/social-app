@@ -22,10 +22,11 @@ import { useNavigate } from "react-router-dom";
 import { useCreatePost } from "@/lib/react-query/queriesAndMutations";
 
 type PostFormProps = {
+  action: 'Create' | 'Update';
   post? : Models.Document;
 }
 
-const PostForm = ({post} : PostFormProps) => {
+const PostForm = ({post, action} : PostFormProps) => {
   const {mutateAsync: createPost, isPending: isLoadingCreate} = useCreatePost();
   const navigate = useNavigate();
   const {user} = useUserContext();

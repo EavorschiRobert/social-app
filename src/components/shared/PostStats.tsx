@@ -45,6 +45,7 @@ const PostStats = ({ post, userId }: PostStatsProps) => {
   const handleSavePost = (
     e: React.MouseEvent<HTMLImageElement, MouseEvent>
   ) => {
+
     e.stopPropagation();
 
     if (savedPostRecord) {
@@ -52,12 +53,12 @@ const PostStats = ({ post, userId }: PostStatsProps) => {
       return deleteSavedPost(savedPostRecord.$id);
     }
 
-    savePost({ userId: userId, postId: post.$id });
+    savePost({ postId: post.$id, userId: userId });
     setIsSaved(true);
   };
   useEffect(() => {
     setIsSaved(!!savedPostRecord);
-  }, [currentUser]);
+  }, [currentUser, savedPostRecord]);
 
   return (
     <div className="flex justify-between items-center z-20">
