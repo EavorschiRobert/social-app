@@ -14,7 +14,6 @@ const LeftSidebar = () => {
   const { mutate: signOut, isSuccess } = useSignOutAccount();
   const navigate = useNavigate();
   const { user } = useUserContext();
-  console.log(user);
   useEffect(() => {
     if (isSuccess) {
       navigate("/");

@@ -15,11 +15,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { SigninValidationSchema as formSchema } from "@/lib/validation";
 import logo from "../../../public/images/logo.svg";
-import { Loader } from "lucide-react";
+
 import { Link, useNavigate } from "react-router-dom";
 import { useSignInAccount } from "@/lib/react-query/queriesAndMutations";
 import { useUserContext } from "@/context/AuthContext";
 import { PasswordInput } from "../../ui/PasswordInput.tsx";
+import Loader from "@/components/shared/Loader.tsx";
 
 const SignInForm = () => {
 
@@ -110,7 +111,7 @@ const SignInForm = () => {
           <Button type="submit" className="shad-button_primary">
             {isUserLoading ? (
               <div className="flex-center gap-2">
-                <Loader className="animate-spin 1s" /> Loading...
+                <Loader/> Loading...
               </div>
             ) : (
               "Sign in"

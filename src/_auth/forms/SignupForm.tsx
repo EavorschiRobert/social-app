@@ -15,7 +15,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { SignupValidationSchema as formSchema } from "@/lib/validation";
 import logo from "../../../public/images/logo.svg";
-import { Loader } from "lucide-react";
+
 import { Link, useNavigate } from "react-router-dom";
 import {
   useCreateUserAccount,
@@ -23,6 +23,7 @@ import {
 } from "@/lib/react-query/queriesAndMutations";
 import { useUserContext } from "@/context/AuthContext";
 import { PasswordInput } from "@/ui/PasswordInput";
+import Loader from "@/components/shared/Loader";
 
 const SignupForm = () => {
 
@@ -149,7 +150,7 @@ const SignupForm = () => {
           <Button type="submit" className="shad-button_primary">
             {isCreatingUser ? (
               <div className="flex-center gap-2">
-                <Loader className="animate-spin 1s" /> Loading...
+                <Loader /> Loading...
               </div>
             ) : (
               "Sign up"
