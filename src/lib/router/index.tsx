@@ -38,7 +38,7 @@ export const router = createBrowserRouter([
           { path: 'all-users', element: <AllUsers/>},
           { path: 'create-post', element: <CreatePost/>},
           { path: 'update-post/:id', element: <EditPost/>},
-          { path: 'posts/:id', element: <PostDetails/>},
+          { path: 'post/:id', element: <PostDetails/>},
           { path: 'profile/:id/*', element: <Profile/>},
           { path: 'update-profile/:id', element: <UpdateProfile/>},
           { path: 'liked-posts', element: <LikedPosts/>}
